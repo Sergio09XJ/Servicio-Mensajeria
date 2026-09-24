@@ -1,22 +1,23 @@
 #include "Cliente.hpp"
 
 std::string Cliente::getNombre(){
-    return nombre;
+    return  this->nombre;
 }
 
 tipoEstatus Cliente::getEstatus(){
-    return estatus;
+    return  this->estatus;
 }
 
-Servidor Cliente::getServidor(){
-    return servidor;
-}
+ std::string Cliente::getPersonaEstatus(){
+    return  this->nombre + " : " + this->estatus ;
+ }
+
 
 void actualizar(){}
 
 bool Cliente::verificarNombre(std::string nombre){
     return true; //Solo para pruebas unitarias de Cliente
-    return servidor.existe(nombre);
+    return servidor.existe( );
 }
 
 
@@ -106,10 +107,11 @@ std::string Cliente::salirCuarto(std::string nombreSala){
 
 
 std::string Cliente::desconectar(){
-
+     
+    close(this->socketCliente;)
     return "{ \"type\": \"DISCONNECT\" }\n";
 }
 
 void Cliente::enviarInformacion(std::string estrucJson){
-     send(clientSocket,estrucJson.c_str(), estrucJson.size(),0 );
+     send(this->socketCliente,estrucJson.c_str(), estrucJson.size(),0 );
 }

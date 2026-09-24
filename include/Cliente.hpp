@@ -4,12 +4,11 @@
 //Librerias del programa. 
 #include "Observador.hpp"
 #include "tipoEstatus.hpp"
-#include "Servidor.hpp"
-#include "tipoEstatus.hpp"
+
 
 //Librerias basicas 
 #include <string>
-#include <iostream>
+#include <vector>
 
 //Libreria para json
 #include <nlohmann/json.hpp>
@@ -28,7 +27,7 @@ class Cliente : public Observador{
 
      std::string nombre; 
      tipoEstatus estatus;
-     int conexión; 
+     int socketCliente; 
 
 
     public:
@@ -43,13 +42,17 @@ class Cliente : public Observador{
            this->nombre = verificarNombre(nombre)
            this->estatus = tipoEstatus::ACTIVE
            //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
-           this->conexión = socket(AF_INET, SOCK_STREAM, 0) 
+           this->socketCliente = socket(AF_INET, SOCK_STREAM, 0) 
            
             // Especificamos la dirección del socket
             sockaddr_in serverAddress;
             serverAddress.sin_family = AF_INET; //Indicamos las dirección a usar  AF_INET es IPv4
             serverAddress.sin_port = htons(8080); //Indicamos el puerto a usar 
             serverAddress.sin_addr.s_addr = INADDR_ANY; //Indicamos las direciones IP a usar, que son del tipo IPv4
+
+            // establecemos conexión con el socket del servidor. 
+            connect(this->socketCliente, (struct sockaddr*)&serverAddress,sizeof(serverAddress)); 
+            //Indicamos el socket | La dirección que configuramos(IPv4) | El tamaño de la dirección. 
 
         }else{ 
             ~Observador(); 
@@ -70,11 +73,11 @@ class Cliente : public Observador{
      tipoEstatus getEstatus();
 
      /**
-     * @brief getServido; para obtener el servidor al que es parte el cliente
+     * @brief getPersonaEstatus; obtiene un string de tipo json con el nombre y el estatus. 
      * @param Sin parametros
-     * @return el servidor, Servidor.
+     * @return string de tipo json. 
      */
-     Servidor getServidor();
+     std::string getPersonaEstatus();
      
      /**
      * @brief actualizar; permite actualizar el el estado de la instacia
