@@ -12,7 +12,8 @@ class Observador{
      /**
      * @brief Método actualizar; permite actulizar el estado de la clase al recibir 
      *        una actualización 
-     * @param Sin parametros.  
+     * @param Sin parametros. 
+     * @return  
      */
      virtual void actualizar() = 0; 
      

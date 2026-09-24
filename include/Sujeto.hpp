@@ -22,6 +22,6 @@ class Sujeto{
      */
      virtual void ~Sujeto() = default;
 
-}
+};
 
 #endif //SUJETO_HPP
