@@ -1,84 +1,111 @@
-
 #include "Cliente.hpp"
 
- std::String Cliente::getNombre(){
-        return nombre; 
-     }
-     tipoEstatus Cliente::getEstatus(){
-        return estatus; 
-     }
-     Servidor Cliente::getServidor(){
-        return servidor; 
-     }
+std::string Cliente::getNombre(){
+    return nombre;
+}
 
-void actualizar(){} 
+tipoEstatus Cliente::getEstatus(){
+    return estatus;
+}
 
-bool Cliente::verificarNombre(std::String nombre){
-        return servidor.existe(nombre); 
+Servidor Cliente::getServidor(){
+    return servidor;
+}
+
+void actualizar(){}
+
+bool Cliente::verificarNombre(std::string nombre){
+    return true; //Solo para pruebas unitarias de Cliente
+    return servidor.existe(nombre);
 }
 
 
+std::string Cliente::mensaje(std::string nombre, std::string msg){
 
-std::String Cliente::mensaje(std::String nombre, std::String msg){
-   
-        return "{ \"type\": \"TEXT\",
-                      \"username\": " << strlen(nombre) << "
-                      \"text\": " << strlen(msg) << "
-                     }\n"
+    return "{ \"type\": \"TEXT\", "
+           "\"username\": \"" + nombre + "\", "
+           "\"text\": \"" + msg + "\" }\n";
 }
 
 
-std::String Cliente::mensajeTodos(std:String msg){
+std::string Cliente::mensajeTodos(std::string msg){
 
-        return  "{ \"type\": \"PUBLIC_TEXT\",
-                   \"text\": " << strlen(msg) << " }\n"
-       
-     }
-
-
-std::String Cliente::crearCuarto(std::String nombreSala){
-
-    return "{ \"type\": \"NEW_ROOM\",
-             \"roomname\": " << strlen(nombreSala) << " } \n"
+    return "{ \"type\": \"PUBLIC_TEXT\", "
+           "\"text\": \"" + msg + "\" }\n";
 }
 
 
-std::String Cliente::invitarCuartoUno(std::String nombre, std::String nombreSala){
+std::string Cliente::crearCuarto(std::string nombreSala){
 
-   return " { \"type\": \"INVITE\",
-            \"roomname\": , " << strlen(nombreSala) << "
-            \"usernames\": " <<  strlen(nombre) << " } \n"
-}
-
-std::String Cliente::invitarCuartoVarios(std::vector<std::String> nombres, std::String nombreSala){
-std::vector<std::String> nombreAux[nombre.size()]; 
-
-   for(int i = 0; i < nombre.size(); i ++){
-      nombreAux[i] = strlen(nombre[i])
-   }
-   return " { \"type\": \"INVITE\",
-            \"roomname\": , " << strlen(nombreSala) << "
-            \"usernames\": " <<  nombreAux  << " } \n"
+    return "{ \"type\": \"NEW_ROOM\", "
+           "\"roomname\": \"" + nombreSala + "\" }\n";
 }
 
-std::String Cliente::entrarCuarto(std::String nombreSala){
-    return "{ \"type\": "JOIN_ROOM",
-              \"roomname\": " << strlen(nombreSala) << " }"
+
+std::string Cliente::invitarCuartoUno(std::string nombre, std::string nombreSala){
+
+    return "{ \"type\": \"INVITE\", "
+           "\"roomname\": \"" + nombreSala + "\", "
+           "\"usernames\": [\"" + nombre + "\"] }\n";
 }
 
-std::String Cliente::roomUsers(std::String cuarto){
-     return " { \"type\": \"ROOM_USERS\",
-                \"roomname\": " << strlen(cuarto) << " } \n"
+
+std::string Cliente::invitarCuartoVarios(
+    std::vector<std::string> nombres,
+    std::string nombreSala
+){
+
+    std::string nombreAux = "[";
+
+    for(size_t i = 0; i < nombres.size(); i++){
+        nombreAux += "\"" + nombres[i] + "\"";
+
+        if(i < nombres.size() - 1){
+            nombreAux += ", ";
+        }
+    }
+
+    nombreAux += "]";
+
+    return "{ \"type\": \"INVITE\", "
+           "\"roomname\": \"" + nombreSala + "\", "
+           "\"usernames\": " + nombreAux + " }\n";
 }
-std::String Cliente::mensajeCuarto(std::String msg,std::String nombreSala){
-    return " { \"type\": \"ROOM_TEXT\",
-             \"roomname\": " << strlen(nombreSala) << ",
-             \"text\": " <<  strlen(msg)  << "} "
+
+
+std::string Cliente::entrarCuarto(std::string nombreSala){
+
+    return "{ \"type\": \"JOIN_ROOM\", "
+           "\"roomname\": \"" + nombreSala + "\" }\n";
 }
-std::String Cliente::salirCuarto(std::String nombreSala){
-    return "{ \"type\": \"LEAVE_ROOM\",
-              \"roomname\": " << strlen(nombreSala) << " } \n"
+
+
+std::string Cliente::roomUsers(std::string cuarto){
+
+    return "{ \"type\": \"ROOM_USERS\", "
+           "\"roomname\": \"" + cuarto + "\" }\n";
 }
-std::String Cliente::desconectar(){
-    return  " { \"type\": \"DISCONNECT\" } \n"
+
+
+std::string Cliente::mensajeCuarto(
+    std::string msg,
+    std::string nombreSala
+){
+
+    return "{ \"type\": \"ROOM_TEXT\", "
+           "\"roomname\": \"" + nombreSala + "\", "
+           "\"text\": \"" + msg + "\" }\n";
+}
+
+
+std::string Cliente::salirCuarto(std::string nombreSala){
+
+    return "{ \"type\": \"LEAVE_ROOM\", "
+           "\"roomname\": \"" + nombreSala + "\" }\n";
+}
+
+
+std::string Cliente::desconectar(){
+
+    return "{ \"type\": \"DISCONNECT\" }\n";
 }

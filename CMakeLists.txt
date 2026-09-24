@@ -30,11 +30,13 @@ target_compile_options(Servicio_Mensajeria
                        -Wall -Wextra
                        )
 
+
 add_executable(ServicioMensajeriaTest
               ./test/ClienteTest.cpp
               ./test/ServidorTest.cpp
-              ./test/CuertoTest.cpp
+              ./test/CuartoTest.cpp
               )
+
 
 add_executable(ServicioMensajeriaApp
               ./src/main.cpp
