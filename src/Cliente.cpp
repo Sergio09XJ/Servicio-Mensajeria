@@ -109,3 +109,7 @@ std::string Cliente::desconectar(){
 
     return "{ \"type\": \"DISCONNECT\" }\n";
 }
+
+void Cliente::enviarInformacion(std::string estrucJson){
+     send(clientSocket,estrucJson.c_str(), estrucJson.size(),0 );
+}

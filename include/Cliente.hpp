@@ -1,14 +1,24 @@
 #ifndef CLIENTE_HPP
 #define CLIENTE_HPP 
 
+//Librerias del programa. 
 #include "Observador.hpp"
 #include "tipoEstatus.hpp"
 #include "Servidor.hpp"
 #include "tipoEstatus.hpp"
 
+//Librerias basicas 
 #include <string>
-#include <nlohmann/json.hpp>
 #include <iostream>
+
+//Libreria para json
+#include <nlohmann/json.hpp>
+
+//Libreria para socket
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 using json = nlohmann::json;
 
@@ -18,7 +28,7 @@ class Cliente : public Observador{
 
      std::string nombre; 
      tipoEstatus estatus;
-     Servidor servidor;
+     int conexión; 
 
 
     public:
@@ -31,7 +41,16 @@ class Cliente : public Observador{
      
         if(verificarNombre(nombre)){
            this->nombre = verificarNombre(nombre)
-           this->nombre = tipoEstatus::ACTIVE
+           this->estatus = tipoEstatus::ACTIVE
+           //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
+           this->conexión = socket(AF_INET, SOCK_STREAM, 0) 
+           
+            // Especificamos la dirección del socket
+            sockaddr_in serverAddress;
+            serverAddress.sin_family = AF_INET; //Indicamos las dirección a usar  AF_INET es IPv4
+            serverAddress.sin_port = htons(8080); //Indicamos el puerto a usar 
+            serverAddress.sin_addr.s_addr = INADDR_ANY; //Indicamos las direciones IP a usar, que son del tipo IPv4
+
         }else{ 
             ~Observador(); 
         }
@@ -133,12 +152,19 @@ class Cliente : public Observador{
      */
      std::string salirCuarto(std::string nombreSala); 
 
-      /**
+    /**
      * @brief desconectar; nos permite salir del servidor 
      * @param Sin parametros  
      * @return Un string en formato json. 
      */
      std::string desconectar(); 
+
+     /**
+     * @brief enviarInformación
+     * @param La estructura Json de tipo string a mandar  
+     * @return nada
+     */
+     void enviarInformacion(std::string estrucJson);
 
 
 }; 
