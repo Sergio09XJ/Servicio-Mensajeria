@@ -9,6 +9,7 @@
 //Librerias basicas 
 #include <string>
 #include <vector>
+#include <iostream>
 
 //Libreria para json
 #include <nlohmann/json.hpp>
@@ -54,7 +55,12 @@ class Cliente : public Observador{
             connect(this->socketCliente, (struct sockaddr*)&serverAddress,sizeof(serverAddress)); 
             //Indicamos el socket | La dirección que configuramos(IPv4) | El tamaño de la dirección. 
 
+            //Identificamos con el servidor. 
+            str::string identify = "{ \"type\": \"IDENTIFY\",
+                                      \"username\": " + this->nombre + " }\n" 
+
         }else{ 
+            std::cout << "La longitud de tu nombre debe ser menor a 8 caractares.  " << std::endl
             ~Observador(); 
         }
      }
