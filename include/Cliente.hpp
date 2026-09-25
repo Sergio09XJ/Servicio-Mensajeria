@@ -92,7 +92,7 @@ class Cliente : public Observador{
      */
      void actualizar() override; 
      /**
-     * @brief verificarNombre; verifica que no exista un usuario ya con el mismo nombre en el servidor o cuarto. 
+     * @brief verificarNombre; verifica que el número de caracteres del usuario sea menor a 8. 
      * @param  El nombre, string
      * @return un booleano, true or false. 
      */
@@ -106,11 +106,32 @@ class Cliente : public Observador{
      std::string mensaje(std::string nombre, std::string msg); 
 
      /**
+     * @brief nuevoEstatus; modifca el estatus a uno nuevo  
+     * @param El string del estatus
+     * @return Un string con formato json.
+    */
+     std::string nuevoEstatus(std::string estatus);
+
+     /**
+     * @brief listaUusarios; es para indicar que se quiere la lista de usuarios en el servidor 
+     * @param Sin parametros 
+     * @return Un string con formato json.
+    */
+     std::string listaUsuarios();
+
+     /**
      * @brief mensajeTodos; manda un str par para el servidor, el mensaje a mandara todos. 
      * @param El mensaje a mandar
      * @return Un string con formato json.  
      */
      std::string mensajeTodos(std:string msg); 
+
+      /**
+     * @brief nuevoEstatus; modifica el estatus 
+     * @param El estatus como string
+     * @return el string en formato json con el estatus
+     */
+     std::string nuevoEstatus(std::string estatus);
 
      /**
      * @brief crearCuarto; manda un str con formato json indicando que se quiere crear un cuarto
@@ -174,6 +195,21 @@ class Cliente : public Observador{
      * @return nada
      */
      void enviarInformacion(std::string estrucJson);
+
+    
+     /**
+     * @brief toString; pasa de tipoEstatus a cadena 
+     * @param El valor de tipo estatus 
+     * @return El valor como string
+     */
+    std::string toString(tipoEstatus estatus);
+    
+     /**
+     * @brief toEstatus; pasa de cadena a tipoEstatus
+     * @param El valor en string  
+     * @return El valor como tipoEstatus
+     */
+    tipoEstatus toEstatus( std::string cadenaEstatus);
 
 
 }; 

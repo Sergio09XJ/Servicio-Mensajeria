@@ -18,14 +18,26 @@
 class Cuarto : public Observador{
     
     private: 
+     std::string nombre; 
      std::vector<Cliente> integrantes; 
 
      
 
     public: 
 
-     Cuarto() {
+     Cuarto(std::string nombre) nombre(nombre) {
+        if(!verificarNombreCuarto(nombre) ){
+            std::cout << "La longitud de del nombre del cuarto debe ser menor o igual a 16 caractares.  " << std::endl
+            ~Observador(); 
+        }
      }
+
+     /**
+     * @brief getIntegrantes; retorna el nombre 
+     * @param No tiene
+     * @return El string del nombre  
+     */
+    std::string getNombre(); 
 
      /**
      * @brief getIntegrantes; retorna los integrantes del cuarto 
@@ -47,6 +59,13 @@ class Cuarto : public Observador{
      * @return Un string de las personas 
      */
     std::string listarPersonas();
+
+    /**
+     * @brief verificarNombreCuarto; verifica que el número de caracteres del cuerto, sea menor o igual a 16. 
+     * @param  El nombre, string
+     * @return un booleano, true or false. 
+     */
+     bool verificarNombreCuarto(std::string nombre);
     
      /**
      * @brief agregarPersona; agrega una persona al cuarto 
@@ -55,7 +74,7 @@ class Cuarto : public Observador{
      */
     void agregarPersona(Cliente persona);
 
-     /**
+    /**
      * @brief sacarPersona; Elimina un cliente del cuarto
      * @param La persona 
      * @return Un booleano para saber si se logro sacar o no.  

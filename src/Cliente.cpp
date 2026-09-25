@@ -16,8 +16,7 @@ tipoEstatus Cliente::getEstatus(){
 void actualizar(){}
 
 bool Cliente::verificarNombre(std::string nombre){
-    return true; //Solo para pruebas unitarias de Cliente
-    return servidor.existe( );
+    if  nombre.size() <= 8 ? return true : return false; 
 }
 
 
@@ -28,6 +27,15 @@ std::string Cliente::mensaje(std::string nombre, std::string msg){
            "\"text\": \"" + msg + "\" }\n";
 }
 
+std::string nuevoEstatus(std::string estatus){
+    this->estatus = toEstatus(estatus); 
+    return "{ \"type\": \"STATUS\",
+              \"status\": " + toString(this->estatus) + " } \n";
+}
+
+std::string listaUsuarios(){
+  return " { \"type\": \"USERS\" } \n";
+}
 
 std::string Cliente::mensajeTodos(std::string msg){
 
@@ -52,8 +60,8 @@ std::string Cliente::invitarCuartoUno(std::string nombre, std::string nombreSala
 
 
 std::string Cliente::invitarCuartoVarios(
-    std::vector<std::string> nombres,
-    std::string nombreSala
+    std::vector<std::string> nombres;
+    std::string nombreSala;
 ){
 
     std::string nombreAux = "[";
@@ -115,3 +123,19 @@ std::string Cliente::desconectar(){
 void Cliente::enviarInformacion(std::string estrucJson){
      send(this->socketCliente,estrucJson.c_str(), estrucJson.size(),0 );
 }
+
+std::string Cliente::toString(tipoEstatus estatus){
+       switch (estatus) {
+            case ACTIVE: return "ACTIVE";
+            case AWAY:   return "AWAY";
+            case BUSY:   return "BUSY";
+        }
+    }
+
+tipoEstatus Cliente::toEstatus( std::string cadenaEstatus){
+       switch (cadenaEstatus) {
+            case "ACTIVE": return ACTIVE;
+            case "AWAY":   return AWAY;
+            case "BUSY":   return BUSY;
+        }
+    }

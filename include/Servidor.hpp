@@ -8,6 +8,7 @@
 //Librerias basicas 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 //Libreria para json
 #include <nlohmann/json.hpp>
@@ -25,12 +26,16 @@ class Servidor : public Sujeto{
      std::vector<Clientes> listClientes; 
      std::vector<Cuarto> listCuartos; 
      int socketServidor;
-     int socketClienteServ;
 
 
     public: 
-   
-     public(): {
+     
+     /**
+     * @brief Servidor; constructor de la clase servidor
+     * @param Sin parametros 
+     * @return Sin return 
+     */
+     Servidor(): {
           
            //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
            this->socketServidor = socket(AF_INET, SOCK_STREAM, 0) 
@@ -57,23 +62,95 @@ class Servidor : public Sujeto{
              }
 
      }
+    
+     /**
+     * @brief ~Servidor; destructor de la clase Servidor 
+     * @param Sin parametros 
+     * @return Sin return 
+     */
+     ~Servidor() = default;
 
-     ~public() = default;
+     /**
+     * @brief existeElUsuario; permite saber si el usuario esta en la lista del servidor
+     * @param el nombre del usuario
+     * @return booleano 
+     */
+     bool existeElUsuario()
+     
+     /**
+     * @brief respuesta; es parte del la interface(Sujeto) manda la respuesta a los usuarios 
+     * @param Sin parametros. 
+     * @return Sin retorno. 
+     */
+     std::string respuesta() override; 
 
-     std::string respeusta() override; 
-
-     bool verExisUsuario(std::String nombre); 
-
+     /**
+     * @brief verExisUsuario; Verifica si ya hay un usuario con ese nombre. 
+     * @param El nombre del usuario 
+     * @return string con formato json 
+     */
+     bool verExisUsuario(std::String nombre);
+     
+     /**
+     * @brief nuevoUsuario; avisa a los demas de un nuevo usuario y maneja las conexiones 
+     * @param sin parametros 
+     * @return string de tipo json 
+     */
      std::string nuevoUsuario(); 
-     std::string nuevoStatus(); 
+
+     /**
+     * @brief nuevoStatus; modifica el status  
+     * @param Sin parametros 
+     * @return string de tipo json 
+     */
+     std::string nuevoStatus();
+     
+     /**
+     * @brief usuariosList; manda la lista de usuarios conectados al servidor.   
+     * @param sin parametros
+     * @return  string de tipo json 
+     */
      std::string usuariosList(); 
 
-     std::string mandarMensaje(std::string msg);
-     std::string mandarMensajePublico(); 
-     std::string seUnioCuarto(Cliente usuario); 
-     std::string listaUsuariosCuarto(std::string nombre); 
+     /**
+     * @brief mandarMensaje; manda un mensaje a cierta persona 
+     * @param El cliente a mandar mensaje y el mensaej 
+     * @return string de tipo json 
+     */
+     std::string mandarMensaje(std::string msg, Cliente nombre);
 
+     /**
+     * @brief mandarMensajePublico; manda un mensaje a todos los usuarios conectados 
+     * @param No hay 
+     * @return string de tipo json 
+     */
+     std::string mandarMensajePublico(std::string msg); 
+
+     /**
+     * @brief seUnioCuarto; une un cliente a cierto cuarto  
+     * @param El cliente a agregar, nombre del cuarto 
+     * @return un string de tipo json 
+     */
+     std::string seUnioCuarto(Cliente usuario, Cuarto nombreCuarto); 
+
+     /**
+     * @brief listaUsuariosCuarto; retorna la lista de usuarios en el cuarto
+     * @param el nombre del cuarto
+     * @return un string de tipo json
+     */
+     std::string listaUsuariosCuarto(std::string nombreCuarto); 
+
+     /**
+     * @brief abandonarCuarto; saca a una persona del cuarto e informa.  
+     * @param El cliente a sacar
+     * @return un string de tipo json
+     */
      std::string abandonarCuarto(Cliente usuario); 
+     /**
+     * @brief desconectado; desconecta al usuario del servidor
+     * @param El cliente a desconectar
+     * @return un string de tipo json
+     */
      std::string desconectado(Cliente usuario);  
 
 }
