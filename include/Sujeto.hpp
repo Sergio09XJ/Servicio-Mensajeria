@@ -11,17 +11,25 @@ class Sujeto{
     public: 
 
      /**
-     * @brief Método respuesta; mandar actualizaciones/respuestas a los observadores
-     * @param sin parametros.  
-     */
-     virtual void respuesta() = 0; 
-     
+      * @brief Método respuesta; mandar actualizaciones/respuestas a los observadores
+      * @param sin parametros.  
+      */
+      virtual void respuesta() = 0;
+
      /**
-     * @brief Destructor Sujeto; lo genera automaticamente. 
-     * @param in parametros.  
-     */
-     virtual void ~Sujeto() = default;
+      * @brief Destructor Sujeto; lo genera automaticamente. 
+      * @param in parametros.  
+      */
+     virtual ~Sujeto() = default;
+
+       
+ 
+     
+     
 
 };
 
 #endif //SUJETO_HPP
+
+
+

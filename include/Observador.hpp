@@ -21,7 +21,7 @@ class Observador{
      * @brief Destructor Observador; lo genera automaticamente. 
      * @param Sin parametros.  
      */
-     virtual void ~Observador() = default;
+     virtual  ~Observador() = default;
 
 };
 

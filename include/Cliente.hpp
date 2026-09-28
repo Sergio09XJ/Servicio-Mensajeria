@@ -5,7 +5,6 @@
 #include "Observador.hpp"
 #include "tipoEstatus.hpp"
 
-
 //Librerias basicas 
 #include <string>
 #include <vector>
@@ -23,53 +22,72 @@
 using json = nlohmann::json;
 
 class Cliente : public Observador{
-  
+
+
     private: 
 
      std::string nombre; 
      tipoEstatus estatus;
      int socketCliente; 
-
+     class Servidor* elServidor; 
 
     public:
+
      /**
      * @brief Constructor de Cliente
      *        Verifica que nombre no este siendo usado ya. 
      * @param El nombre, el estatus, el servidor 
      */
-     Cliente(std::string nombre, Servidor servidor ) : servidor(servidor) {
-     
+
+     Cliente(std::string nombre, Servidor* elServidor) {
+
         if(verificarNombre(nombre)){
-           this->nombre = verificarNombre(nombre)
-           this->estatus = tipoEstatus::ACTIVE
+           this->nombre = nombre; 
+           this->elServidor = elServidor;
+           this->estatus = tipoEstatus::ACTIVE;
+
            //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
-           this->socketCliente = socket(AF_INET, SOCK_STREAM, 0) 
-           
+           this->socketCliente = socket(AF_INET, SOCK_STREAM, 0);
+
+
             // Especificamos la dirección del socket
             sockaddr_in serverAddress;
-            serverAddress.sin_family = AF_INET; //Indicamos las dirección a usar  AF_INET es IPv4
-            serverAddress.sin_port = htons(8080); //Indicamos el puerto a usar 
-            serverAddress.sin_addr.s_addr = INADDR_ANY; //Indicamos las direciones IP a usar, que son del tipo IPv4
+            serverAddress.sin_family = AF_INET;
+            serverAddress.sin_port = htons(8080);
+            serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
             // establecemos conexión con el socket del servidor. 
             connect(this->socketCliente, (struct sockaddr*)&serverAddress,sizeof(serverAddress)); 
-            //Indicamos el socket | La dirección que configuramos(IPv4) | El tamaño de la dirección. 
 
             //Identificamos con el servidor. 
-            str::string identify = "{ \"type\": \"IDENTIFY\",
-                                      \"username\": " + this->nombre + " }\n" 
+            std::string identify = "{ \"type\": \"IDENTIFY\", \"username\": \"" + this->nombre + "\" }\n";
 
         }else{ 
-            std::cout << "La longitud de tu nombre debe ser menor a 8 caractares.  " << std::endl
-            ~Observador(); 
+            std::cout << "La longitud de tu nombre debe ser menor o igual a  8 caractares.  " << std::endl;
         }
+
      }
+
+     /**
+     * @brief ==; operador para permitir la comparación usando ==
+     * @param La referencia a un cliente
+     * @return booleano, si es el mismo o no lo es. 
+     */
+     bool operator==(const Cliente& otro) const;
+
      /**
      * @brief getNombre; para obtener el nombre de la instancía 
      * @param Sin parametros
      * @return el nombre, string
      */
      std::string getNombre();
+
+     /**
+     * @brief getInstanciaNombre; para obtener la instancia a partir del nombre. 
+     * @param El nombre del usuario
+     * @return un puntero a la instancía. 
+     */
+     Cliente* getInstanciaNombre(std::string nombre);
 
      /**
      * @brief getEstatus; para obtener en estatus de la isntancía
@@ -91,12 +109,14 @@ class Cliente : public Observador{
      * @return 
      */
      void actualizar() override; 
+
      /**
      * @brief verificarNombre; verifica que el número de caracteres del usuario sea menor a 8. 
      * @param  El nombre, string
      * @return un booleano, true or false. 
      */
      bool verificarNombre(std::string nombre);
+
      
      /**
      * @brief mensaje; manda un str par para el servidor, el mensaje a mandar. 
@@ -105,12 +125,6 @@ class Cliente : public Observador{
      */
      std::string mensaje(std::string nombre, std::string msg); 
 
-     /**
-     * @brief nuevoEstatus; modifca el estatus a uno nuevo  
-     * @param El string del estatus
-     * @return Un string con formato json.
-    */
-     std::string nuevoEstatus(std::string estatus);
 
      /**
      * @brief listaUusarios; es para indicar que se quiere la lista de usuarios en el servidor 
@@ -124,7 +138,7 @@ class Cliente : public Observador{
      * @param El mensaje a mandar
      * @return Un string con formato json.  
      */
-     std::string mensajeTodos(std:string msg); 
+     std::string mensajeTodos(std::string msg); 
 
       /**
      * @brief nuevoEstatus; modifica el estatus 
