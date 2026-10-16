@@ -66,7 +66,7 @@ class Cliente : public Observador{
 
 
         }else{ 
-            std::cout << "La longitud de tu nombre debe ser menor o igual a  8 caractares.  " << std::endl;
+            std::cout << "La longitud de tu nombre debe ser menor o igual a 8 caractares.  " << std::endl;
         }
 
      }
@@ -93,7 +93,7 @@ class Cliente : public Observador{
      Cliente* getInstanciaNombre(std::string nombre);
 
      /**
-     * @brief getEstatus; para obtener en estatus de la isntancía
+     * @brief getEstatus; para obtener el estatus de la instancía
      * @param Sin parametros
      * @return la instancia, tipoEstatus
      */
@@ -107,7 +107,7 @@ class Cliente : public Observador{
      std::string getPersonaEstatus();
      
      /**
-     * @brief actualizar; permite actualizar el el estado de la instacia
+     * @brief actualizar; permite actualizar el estado de la instancia
      * @param Sin parametros
      * @return 
      */
@@ -130,14 +130,14 @@ class Cliente : public Observador{
 
 
      /**
-     * @brief listaUusarios; es para indicar que se quiere la lista de usuarios en el servidor 
+     * @brief listaUsuarios; es para indicar que se quiere la lista de usuarios en el servidor 
      * @param Sin parametros 
      * @return Un string con formato json.
     */
      std::string listaUsuarios();
 
      /**
-     * @brief mensajeTodos; manda un str par para el servidor, el mensaje a mandara todos. 
+     * @brief mensajeTodos; manda un str par para el servidor, el mensaje a mandar todos. 
      * @param El mensaje a mandar
      * @return Un string con formato json.  
      */

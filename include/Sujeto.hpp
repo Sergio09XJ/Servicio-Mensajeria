@@ -3,7 +3,7 @@
 
 /**
 * @class Clase interface para el sujeto.
-         Quien manda actualizaciones a los obesrvadores. 
+         Quien manda actualizaciones a los observadores. 
 * @brief Permite mandar respuestas a los obesrvadores.  
 */
 class Sujeto{
@@ -14,7 +14,7 @@ class Sujeto{
       * @brief Método respuesta; mandar actualizaciones/respuestas a los observadores
       * @param sin parametros.  
       */
-      virtual void respuesta() = 0;
+      virtual void respuesta(std::vector<Cliente> PersonasEnviar, std::string msg) = 0;
 
      /**
       * @brief Destructor Sujeto; lo genera automaticamente. 

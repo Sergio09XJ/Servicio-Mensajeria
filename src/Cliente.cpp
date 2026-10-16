@@ -63,10 +63,7 @@ std::string Cliente::invitarCuartoUno(std::string nombre, std::string nombreSala
            "\"usernames\": [\"" + nombre + "\"] }\n";
 }
 
-std::string Cliente::invitarCuartoVarios(
-    std::vector<std::string> nombres,
-    std::string nombreSala
-){
+std::string Cliente::invitarCuartoVarios( std::vector<std::string> nombres, std::string nombreSala){
 
     std::string nombreAux = "[";
 
@@ -97,10 +94,7 @@ std::string Cliente::roomUsers(std::string cuarto){
            "\"roomname\": \"" + cuarto + "\" }\n";
 }
 
-std::string Cliente::mensajeCuarto(
-    std::string msg,
-    std::string nombreSala
-){
+std::string Cliente::mensajeCuarto(std::string msg,std::string nombreSala){
 
     return "{ \"type\": \"ROOM_TEXT\", "
            "\"roomname\": \"" + nombreSala + "\", "

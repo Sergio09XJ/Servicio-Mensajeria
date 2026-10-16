@@ -77,11 +77,7 @@ std::string Cuarto::agregarPersona(Cliente persona){
 
 bool Cuarto::sacarPersona(Cliente persona){
 
-    auto estaPersona = std::find(
-        this->integrantes.begin(),
-        this->integrantes.end(),
-        persona
-    );
+    auto estaPersona = std::find(this->integrantes.begin(), this->integrantes.end(), persona);
 
     if (estaPersona != this->integrantes.end()) {
         std::erase(this->integrantes, persona);

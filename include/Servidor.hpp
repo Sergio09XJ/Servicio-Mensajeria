@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 struct conectClienteSocket{
+
   public: 
    std::string nombreCliente; 
    int socketCliente; 
@@ -100,12 +101,19 @@ class Servidor : public Sujeto{
      */
      json recibo(int socketParam)
 
-     /**
+      /**
      * @brief respuesta; es parte del la interface(Sujeto) manda la respuesta a los usuarios 
-     * @param Sin parametros. 
+     * @param Lista de tipo String con personas a enviar, el mensaje 
      * @return Sin retorno. 
      */
-     void respuesta() override;
+     void respuesta(std::vector<std::string> PersonasEnviar, std::string msg); 
+
+     /**
+     * @brief respuesta; es parte del la interface(Sujeto) manda la respuesta a los usuarios 
+     * @param Lista de tipo cliente con personas a enviar, el mensaje
+     * @return Sin retorno. 
+     */
+     void respuesta(std::vector<Cliente> PersonasEnviar, std::string msg) override;
 
      /**
      * @brief conexion; método que checa conexiones constantemente para agregar. 

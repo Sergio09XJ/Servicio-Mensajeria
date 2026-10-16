@@ -2,10 +2,6 @@
 #include "Cuarto.hpp"
 
 
-
-
-
-
 // --------- Funciones Envio y Recibo -------------------------------------------------------
 
 
@@ -32,6 +28,25 @@ json Servidor::recibo(int socketParam){
    return nullptr;
 }
 
+void Servidor::respuesta(std::vector<std::string> PersonasEnviar, std::string msg){
+
+    if (PersonasEnviar.size() == listaConectados.size()) {
+       std::lock_guard<std::mutex> lock(mtx);
+       for(int j = 0; j < listaConectados.size(); j++){
+         send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+       }
+    }else{
+        for (int i = 0; i < PersonasEnviar.size(); i++){
+            std::lock_guard<std::mutex> lock(mtx);
+            for(int j = 0; j < listaConectados.size(); j++){
+              if (PersonasEnviar[j] == listaConectados.nombreCliente){
+                 send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+              }
+            }
+        }
+    }
+}
+
 void Servidor::respuesta(std::vector<Cliente> PersonasEnviar, std::string msg){
 
     if (PersonasEnviar.size() == listaConectados.size()) {
@@ -43,12 +58,13 @@ void Servidor::respuesta(std::vector<Cliente> PersonasEnviar, std::string msg){
         for (int i = 0; i < PersonasEnviar.size(); i++){
             std::lock_guard<std::mutex> lock(mtx);
             for(int j = 0; j < listaConectados.size(); j++){
-              if (PersonasEnviar.getNombre() == listaConectados.nombreCliente){
+              if (PersonasEnviar[j].getNombre() == listaConectados.nombreCliente){
                  send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
               }
             }
         }
     }
+}
 
 void Servidor::entradaUsuario(int socketCliente){
     json datos = recibo(socketCliente);
@@ -69,24 +85,51 @@ void Servidor::entradaUsuario(int socketCliente){
           
       }else if(datos["type"] == "USERS"){
         std::string json = usuariosList(); 
-        respuesta(buscarNombre(socketCliente), json); 
+        respuesta(buscarNombre(socketCliente), json);  //cambiar a tipo string
 
       }else if(datos["type"] == "PUBLIC_TEXT"){
-         
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
+         respuesta(listClientes, json) 
 
       }else if(datos["type"] == "NEW_ROOM"){
+        std::string json = :respuestaNuevoCuarto(datos["roomname"])
+         respuesta(buscarNombre(socketCliente), json) 
           
       }else if(datos["type"] == "INVITE"){
+         std::vector<std::string> listaUsuarios = datos["usernames"]
+         std::string json = invitacion(datos["roomname"], listaUsuarios)
+         if(json["type"] == "Response"){
+            buscarNombre(socketCliente)
+         }else{
+            respuesta(listClientes, json) 
+            
+         }
+         
           
       }else if(datos["type"] == "JOIN_ROOM"){
+        seUnioCuarto(Cliente usuario, Cuarto sala)
+         std::string json = seUnioCuarto(buscarNombre(socketCliente), datos["roomname"])
+         if(json["type"] == "RESPONSE"){
+            respuesta(buscarNombre(socketCliente), json) 
+         }else{
+            buscarNombre(socketCliente)
+         }
           
       }else if(datos["type"] == "ROOM_USERS"){
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
+         respuesta(listClientes, json)
           
       }else if(datos["type"] == "ROOM_TEXT"){
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
+         respuesta(listClientes, json)
           
       }else if(datos["type"] == "LEAVE_ROOM"){
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
+         respuesta(listClientes, json)
           
       }else if(datos["type"] == "DISCONNECT"){
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
+         respuesta(listClientes, json)
           
       }else {
 
@@ -95,10 +138,9 @@ void Servidor::entradaUsuario(int socketCliente){
 }
 
 
-
 // --------- Funciones Auxiliares ----------------------------------------------------------- 
 
-std::string buscarNombre(int socketParam){
+std::string Servidor::buscarNombre(int socketParam){
     for(size_t i = 0; i < listaConectados.size(); i++){
         if(listaConectados[i].socketCliente == socketParam){
             return listaConectados[i].nombreCliente;
@@ -107,7 +149,7 @@ std::string buscarNombre(int socketParam){
 }
 
 
-int buscarSocket(std::string nombre){
+int Servidor::buscarSocket(std::string nombre){
     for(size_t i = 0; i < listaConectados.size(); i++){
         if(listaConectados[i].nombreCliente == nombre){
             return listaConectados[i].socketCliente;
@@ -237,7 +279,7 @@ std::string Servidor::respuestaNuevoCuarto(std::string cuartoNuevo){
 }
 
 
-std::string Servidor::invitacion(Cuarto sala, std::vector<Cliente> listaUsuarios){
+std::string Servidor::invitacion(Cuarto sala, std::vector<std::string> listaUsuarios){
 
     Cuarto* cuartoPtr = nullptr;
     if (existeElCuarto(sala)){
@@ -252,9 +294,9 @@ std::string Servidor::invitacion(Cuarto sala, std::vector<Cliente> listaUsuarios
                "\"extra\": \"" + sala.getNombre() + "\" }\n";
     }
 
-    for (const auto& usuario : listaUsuarios){
+    for (const std::string usuario : listaUsuarios){
         bool encontrado = false;
-        if (existeElUsuario(usuario)){
+        if (listClientes.saberPersonaEsta(usuario)){
                 encontrado = true;
                 break;
             }
@@ -268,13 +310,9 @@ std::string Servidor::invitacion(Cuarto sala, std::vector<Cliente> listaUsuarios
         }
     }
     
-
     std::string retorno;
-
     for (const auto& usuario : listaUsuarios){
-
         if (!cuartoPtr->saberPersonaEsta(usuario.getNombre())){
-
             retorno += "{ \"type\": \"INVITATION\", "
                         "\"username\": \"" + usuario.getNombre() + "\", "
                         "\"roomname\": \"" + sala.getNombre() + "\" }\n";

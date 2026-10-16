@@ -22,7 +22,6 @@ class Cuarto : public Observador{
      std::vector<Cliente> integrantes; 
      std::vector<Cliente> invitados; 
 
-     
 
     public: 
      
@@ -94,7 +93,7 @@ class Cuarto : public Observador{
      bool verificarNombreCuarto(std::string nombre);
 
      /**
-     * @brief agregarPersona; agrega una persona al cuarto  de invitados
+     * @brief agregarPersona; agrega una persona al cuarto de invitados
      * @param El invitado a agregar
      * @return nada
      */
