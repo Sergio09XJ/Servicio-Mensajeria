@@ -66,6 +66,24 @@ void Servidor::respuesta(std::vector<Cliente> PersonasEnviar, std::string msg){
     }
 }
 
+ Cliente Servidor::devolverCliente(std::string nombre){
+    for(auto Cliente : listClientes){
+        if Cliente.getNombre() == nombre{
+            return Cliente
+        }
+    }
+    return nullptr
+ }
+
+ Cuarto Servidor::devolverCuarto(std::string nombre){
+    for(auto Cuarto : listCuarto){
+        if Cuarto.getNombre() == nombre{
+            return Cuarto
+        }
+    }
+    return nullptr
+ }
+
 void Servidor::entradaUsuario(int socketCliente){
     json datos = recibo(socketCliente);
 
@@ -85,7 +103,7 @@ void Servidor::entradaUsuario(int socketCliente){
           
       }else if(datos["type"] == "USERS"){
         std::string json = usuariosList(); 
-        respuesta(buscarNombre(socketCliente), json);  //cambiar a tipo string
+        respuesta(buscarNombre(socketCliente), json);  
 
       }else if(datos["type"] == "PUBLIC_TEXT"){
          std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
@@ -99,7 +117,7 @@ void Servidor::entradaUsuario(int socketCliente){
          std::vector<std::string> listaUsuarios = datos["usernames"]
          std::string json = invitacion(datos["roomname"], listaUsuarios)
          if(json["type"] == "Response"){
-            buscarNombre(socketCliente)
+            respuesta(buscarNombre(socketCliente), json)
          }else{
             respuesta(listClientes, json) 
             
@@ -107,32 +125,55 @@ void Servidor::entradaUsuario(int socketCliente){
          
           
       }else if(datos["type"] == "JOIN_ROOM"){
-        seUnioCuarto(Cliente usuario, Cuarto sala)
-         std::string json = seUnioCuarto(buscarNombre(socketCliente), datos["roomname"])
-         if(json["type"] == "RESPONSE"){
-            respuesta(buscarNombre(socketCliente), json) 
-         }else{
-            buscarNombre(socketCliente)
+         std::string json = seUnioCuarto(devolverCliente((socketCliente)), datos["roomname"])
+         std::isstringstream flujo(json); 
+         std::string mensaje;
+
+         while(std::getline(flujo, mensaje)){
+            if(json["type"] == "RESPONSE"){
+              respuesta(buscarNombre(socketCliente), json) 
+            }else{
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+            }
          }
+         
           
       }else if(datos["type"] == "ROOM_USERS"){
-         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
-         respuesta(listClientes, json)
+        listaUsuariosCuarto( Cuarto sala, Cliente usuario)
+        std::string json = listaUsuariosCuarto(devolverCuarto(datos["roomname"]), devolverCliente((socketCliente)))
+         if(json["type"] == "RESPONSE"){
+              respuesta(buscarNombre(socketCliente), json) 
+            }else{
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+            }
           
       }else if(datos["type"] == "ROOM_TEXT"){
-         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
-         respuesta(listClientes, json)
+         std::string json = mandarMensajeCuarto( datos["text"], datos["roomname"], devolverCliente((socketCliente)))
+         if(json["type"] == "RESPONSE"){
+              respuesta(buscarNombre(socketCliente), json) 
+         }else{
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+         }
           
       }else if(datos["type"] == "LEAVE_ROOM"){
-         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
-         respuesta(listClientes, json)
+         std::string json = abandonarCuarto(devolverCliente((socketCliente)), devolverCuarto(datos["roomname"]))
+         if(json["type"] == "RESPONSE"){
+              respuesta(buscarNombre(socketCliente), json) 
+         }else{
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+         }
           
       }else if(datos["type"] == "DISCONNECT"){
-         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
-         respuesta(listClientes, json)
+         std::string json = desconectado(devolverCliente(socketCliente))
+         respuesta(devolverCliente(socketCliente), json)
           
       }else {
-
+         std::string json = "{ \"type\": \"RESPONSE\",
+                                \"operation\": \"INVALID\",
+                                \"result\": \"INVALID\"  }\n"
+         respuesta(devolverCliente(socketCliente), json)
+         std::string json = desconectado(devolverCliente(socketCliente))
+         respuesta(devolverCliente(socketCliente), json)
       }
 
 }
@@ -328,7 +369,6 @@ std::string Servidor::seUnioCuarto(Cliente usuario, Cuarto sala){
     Cuarto* cuartoPtr = nullptr;
         if (existeElCuarto(sala)){
             cuartoPtr = sala;
-            break;
         }
     
 
@@ -369,7 +409,6 @@ std::string Servidor::listaUsuariosCuarto( Cuarto sala, Cliente usuario){
     Cuarto* cuartoPtr = nullptr;
     if (existeElCuarto(sala)){
             cuartoPtr = sala;
-            break;
         }
     }
 

@@ -72,7 +72,7 @@ std::string Cuarto::agregarPersona(Cliente persona){
     return " { \"type\": \"RESPONSE\", "
            "\"operation\": \"JOIN_ROOM\", "
            "\"result\": \"SUCCESS\", "
-           "\"extra\": " + persona.getNombre() + " }\n";
+           "\"extra\": \"" + persona.getNombre() + "\" }\n";
 }
 
 bool Cuarto::sacarPersona(Cliente persona){

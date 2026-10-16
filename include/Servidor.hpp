@@ -10,6 +10,7 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <sstream>
 
 //Libreria para json
 #include <nlohmann/json.hpp>
@@ -86,6 +87,13 @@ class Servidor : public Sujeto{
      * @return El socket de la relación. 
      */
      int buscarSocket(std::string nombre);
+
+     /**
+     * @brief devolverCliente; busca un cliente y lo devuelve en base a su nombre
+     * @param El nombre del cliente
+     * @return El cliente 
+     */
+     Cliente devolverCliente(std::string nombre);
 
      /**
      * @brief entradaUsuario; se encarga de mandar a llamar a recibo pero desde un thread  
