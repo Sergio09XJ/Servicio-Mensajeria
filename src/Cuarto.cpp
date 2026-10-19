@@ -24,14 +24,11 @@ Cuarto* Cuarto::getInstanciaCuarto(std::string sala){
 }
 
 
-
-void Cuarto::actualizar(){}
-
 std::string Cuarto::listarPersonas(){
 
     std::string listaPersonas = "";
 
-    for (int i = 0; i < this->integrantes.size(); i++){
+    for (std::size_t i = 0; i < this->integrantes.size(); i++){
 
         listaPersonas += "\"" + integrantes[i].getNombre() + "\": \""
                       + integrantes[i].toString(integrantes[i].getEstatus()) + "\"";
@@ -89,7 +86,7 @@ bool Cuarto::sacarPersona(Cliente persona){
 
 bool Cuarto::saberPersonaEsta(std::string nombre){
 
-    for(int i = 0; i < this->integrantes.size(); i++){
+    for(std::size_t i = 0; i < this->integrantes.size(); i++){
 
         if (nombre == this->integrantes[i].getNombre()){
             return true;

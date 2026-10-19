@@ -1,0 +1,7 @@
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/Servicio_Mensajeria.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/ServicioMensajeriaTest.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/ServicioMensajeriaApp.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/doc.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/test.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/edit_cache.dir
+/Users/sergiodanielaguirreconsuegra/Documents/Programar/C++Intermedio-Avanzado/ProyectoMensajería/build/CMakeFiles/rebuild_cache.dir

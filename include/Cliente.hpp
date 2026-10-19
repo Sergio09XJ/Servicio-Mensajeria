@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <memory>
+
+
 
 //Libreria para json
 #include <nlohmann/json.hpp>
@@ -39,37 +43,7 @@ class Cliente : public Observador{
      * @param El nombre, el estatus, el servidor 
      */
 
-     Cliente(std::string nombre, Servidor* elServidor) {
-
-        if(verificarNombre(nombre)){
-           this->nombre = nombre; 
-           this->elServidor = elServidor;
-           this->estatus = tipoEstatus::ACTIVE;
-
-           //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
-           this->socketCliente = socket(AF_INET, SOCK_STREAM, 0);
-
-
-            // Especificamos la dirección del socket
-            sockaddr_in serverAddress;
-            serverAddress.sin_family = AF_INET;
-            serverAddress.sin_port = htons(8080);
-            serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-            // establecemos conexión con el socket del servidor. 
-            connect(this->socketCliente, (struct sockaddr*)&serverAddress,sizeof(serverAddress)); 
-
-            //Identificamos con el servidor. 
-            std::string identify = "{ \"type\": \"IDENTIFY\", \"username\": \"" + this->nombre + "\" }\n";
-            send(clientSocket, message.c_str(), identify.size(), 0)
-
-
-
-        }else{ 
-            std::cout << "La longitud de tu nombre debe ser menor o igual a 8 caractares.  " << std::endl;
-        }
-
-     }
+     Cliente(std::string nombre, Servidor* elServidor);
 
      /**
      * @brief ==; operador para permitir la comparación usando ==
@@ -105,13 +79,105 @@ class Cliente : public Observador{
      * @return string de tipo json. 
      */
      std::string getPersonaEstatus();
+
+    /**
+     * @brief recibo; permite recibir mensajes desde el servidor y pararlos a json 
+     * @param Sin un socket 
+     * @return el json. 
+     */
+     json recibo(int socketParam);
      
      /**
      * @brief actualizar; permite actualizar el estado de la instancia
      * @param Sin parametros
      * @return 
      */
-     void actualizar() override; 
+     void actualizar(int socketParam) override; 
+     
+     /**
+     * @brief respRESPONSE; string para usuario cuando sea tipo response
+     * @param Sin json 
+     * @return string
+     */
+     std::string respRESPONSE(json json); 
+
+     /**
+     * @brief respNEW_STATUS; string para usuario cuando sea tipo New_status
+     * @param Sin json
+     * @return string
+     */
+     std::string respNEW_STATUS(json json); 
+
+     /**
+     * @brief respUSER_LIST; string para usuario cuando sea tipo User_list
+     * @param Sin json
+     * @return string
+     */
+     std::string respUSER_LIST(json json); 
+
+     /**
+     * @brief respTEXT_FROM;string para usuario cuando sea tipo Text from 
+     * @param Sin json
+     * @return string
+     */
+     std::string respTEXT_FROM(json json); 
+
+     /**
+     * @brief respPUBLIC_TEXT_FROM; string para usuario cuando sea tipo Public Text from 
+     * @param Sin json
+     * @return string
+     */
+     std::string respPUBLIC_TEXT_FROM(json json);
+     
+     /**
+     * @brief resNEW_ROOM; string para usuario cuando sea tipo new room 
+     * @param Sin json
+     * @return string
+     */
+     std::string resNEW_ROOM(json json);
+
+     /**
+     * @brief respINVITATION; string para usuario cuando sea tipo Invitation
+     * @param Sin json
+     * @return string
+     */
+     std::string respINVITATION(json json); 
+
+     /**
+     * @brief respJOINED_ROOM; string para usuario cuando sea tipo joined room 
+     * @param Sin json
+     * @return string
+     */
+     std::string respJOINED_ROOM(json json);
+
+     /**
+     * @brief respROOM_USER_LIST; string para usuario cuando sea tipo User list
+     * @param Sin json
+     * @return string
+     */
+     std::string respROOM_USER_LIST(json json); 
+
+     /**
+     * @brief respROOM_TEXT_FROM; string para usuario cuando sea tipo Room text from 
+     * @param Sin json
+     * @return string
+     */
+     std::string respROOM_TEXT_FROM(json json); 
+     
+     /**
+     * @brief respLEFT_ROOM; string para usuario cuando sea tipo left room 
+     * @param Sin json
+     * @return string
+     */
+     std::string respLEFT_ROOM(json json);
+
+     /**
+     * @brief respDISCONNECTED; string para usuario cuando sea tipo Disconnected
+     * @param Sin json
+     * @return string
+     */
+     std::string respDISCONNECTED(json json); 
+
 
      /**
      * @brief verificarNombre; verifica que el número de caracteres del usuario sea menor a 8. 

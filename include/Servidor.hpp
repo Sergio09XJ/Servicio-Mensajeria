@@ -28,10 +28,10 @@ struct conectClienteSocket{
    int socketCliente; 
 
    conectClienteSocket(std::string nombreCliente, int socketCliente) : 
-   nombreCliente(nombreCliente), socketCliente(socketCliente) {}
+   nombreCliente(nombreCliente), socketCliente(socketCliente) {};
 
   
-}
+};
 
 class Cuarto;
 class Servidor : public Sujeto{
@@ -52,27 +52,23 @@ class Servidor : public Sujeto{
      * @param Sin parametros 
      * @return Sin return 
      */
-     Servidor() {
-          
-           //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
-           this->socketServidor = socket(AF_INET, SOCK_STREAM, 0); 
-           
-            // Especificamos la dirección del socket
-            sockaddr_in serverAddress;
-            serverAddress.sin_family = AF_INET; //Indicamos las dirección a usar  AF_INET es IPv4
-            serverAddress.sin_port = htons(8080); //Indicamos el puerto a usar 
-            serverAddress.sin_addr.s_addr = INADDR_ANY; //Indicamos las direciones IP a usar, que son del tipo IPv4
+     Servidor();
 
-            // establecemos conexión con el socket del servidor. 
-            bind(socketServidor, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
-            //Indicamos el socket | La dirección que configuramos(IPv4) | El tamaño de la dirección. 
+     /**
+     * @brief ~Servidor; destructor de la clase servidor
+     * @param Sin parametros 
+     * @return Sin return 
+     */
+     ~Servidor();
 
-            //Convertimos este socket a uno de escucha 
-            listen(socketServidor, 10);
 
-            conexion();
-    
-     }
+      /**
+     * @brief getSocket; retorna el socket del servidor
+     * @param nada 
+     * @return El socket del servidor
+     */
+     int getSocket();
+
 
      /**
      * @brief buscarNombre; se encarga de buscar el nombre en base al socket de la lista de listaConectados 
@@ -93,7 +89,14 @@ class Servidor : public Sujeto{
      * @param El nombre del cliente
      * @return El cliente 
      */
-     Cliente devolverCliente(std::string nombre);
+     Cliente& devolverCliente(std::string nombre);
+
+    /**
+     * @brief devolverCuarto; busca un cuarto y lo devuelve en base a su nombre
+     * @param El nombre del cuarto
+     * @return El cuarto 
+     */
+     Cliente& devolverCuarto(std::string nombre);
 
      /**
      * @brief entradaUsuario; se encarga de mandar a llamar a recibo pero desde un thread  
@@ -107,7 +110,7 @@ class Servidor : public Sujeto{
      * @param El socket de donde viene. 
      * @return El json respectivo a el socket. 
      */
-     json recibo(int socketParam)
+     nlohmann::json recibo(int socketParam);
 
       /**
      * @brief respuesta; es parte del la interface(Sujeto) manda la respuesta a los usuarios 

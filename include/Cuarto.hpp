@@ -1,7 +1,6 @@
 #ifndef CUARTO_HPP
 #define CUARTO_HPP 
 
-#include "Observador.hpp"
 #include "Cliente.hpp"
 
 
@@ -15,7 +14,7 @@
 
 
 
-class Cuarto : public Observador{
+class Cuarto{
     
     private: 
      std::string nombre; 
@@ -70,13 +69,6 @@ class Cuarto : public Observador{
      * @return Un vector de clientes  
      */
     std::vector<Cliente> getInvitados();
-
-     /**
-     * @brief actualizar; actualiza los datos del cuarto
-     * @param No tiene 
-     * @return No tiene  
-     */
-    void actualizar() override; 
     
      /**
      * @brief listarPersonas; manda una lista de string de las personas con su estatus

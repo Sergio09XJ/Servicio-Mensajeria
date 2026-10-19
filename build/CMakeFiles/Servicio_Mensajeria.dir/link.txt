@@ -1,0 +1,2 @@
+/usr/bin/ar qc libServicio_Mensajeria.a CMakeFiles/Servicio_Mensajeria.dir/src/Cliente.cpp.o CMakeFiles/Servicio_Mensajeria.dir/src/Cuarto.cpp.o CMakeFiles/Servicio_Mensajeria.dir/src/Servidor.cpp.o
+/usr/bin/ranlib libServicio_Mensajeria.a

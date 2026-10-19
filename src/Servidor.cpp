@@ -1,10 +1,38 @@
 #include "Servidor.hpp"
 #include "Cuarto.hpp"
 
+// ------------- Constructor y Destructor ------------------------------------------------------------------
+
+Servidor::Servidor(){
+          
+           //Creamos el socket, A_INET indica que sera IPv4, SOCK_STREAM el flujo, TCP y 0 el protocolo para esa combinación 
+           this->socketServidor = socket(AF_INET, SOCK_STREAM, 0); 
+           
+            // Especificamos la dirección del socket
+            sockaddr_in serverAddress;
+            serverAddress.sin_family = AF_INET; //Indicamos las dirección a usar  AF_INET es IPv4
+            serverAddress.sin_port = htons(8080); //Indicamos el puerto a usar 
+            serverAddress.sin_addr.s_addr = INADDR_ANY; //Indicamos las direciones IP a usar, que son del tipo IPv4
+
+            // establecemos conexión con el socket del servidor. 
+            bind(socketServidor, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+            //Indicamos el socket | La dirección que configuramos(IPv4) | El tamaño de la dirección. 
+
+            //Convertimos este socket a uno de escucha 
+            listen(socketServidor, 10);
+
+            conexion();
+    
+     }
+
+
+Servidor::~Servidor() = default;
 
 // --------- Funciones Envio y Recibo -------------------------------------------------------
 
-
+int Servidor::getSocket(){
+    return socketServidor;
+}
 
 void Servidor::conexion(){
     while (true) {
@@ -32,15 +60,15 @@ void Servidor::respuesta(std::vector<std::string> PersonasEnviar, std::string ms
 
     if (PersonasEnviar.size() == listaConectados.size()) {
        std::lock_guard<std::mutex> lock(mtx);
-       for(int j = 0; j < listaConectados.size(); j++){
-         send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+       for(std::size_t j = 0; j < listaConectados.size(); j++){
+         send(listaConectados[j].socketCliente, msg.c_str(), msg.size(), 0);
        }
     }else{
-        for (int i = 0; i < PersonasEnviar.size(); i++){
+        for (std::size_t i = 0; i < PersonasEnviar.size(); i++){
             std::lock_guard<std::mutex> lock(mtx);
-            for(int j = 0; j < listaConectados.size(); j++){
-              if (PersonasEnviar[j] == listaConectados.nombreCliente){
-                 send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+            for(std::size_t j = 0; j < listaConectados.size(); j++){
+              if (PersonasEnviar[i] == listaConectados[j].nombreCliente){
+                 send(listaConectados[j].socketCliente, msg.c_str(), msg.size(), 0);
               }
             }
         }
@@ -51,50 +79,49 @@ void Servidor::respuesta(std::vector<Cliente> PersonasEnviar, std::string msg){
 
     if (PersonasEnviar.size() == listaConectados.size()) {
        std::lock_guard<std::mutex> lock(mtx);
-       for(int j = 0; j < listaConectados.size(); j++){
-         send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+       for(std::size_t j = 0; j < listaConectados.size(); j++){
+         send(listaConectados[j].socketCliente, msg.c_str(), msg.size(), 0);
        }
     }else{
-        for (int i = 0; i < PersonasEnviar.size(); i++){
+        for (std::size_t i = 0; i < PersonasEnviar.size(); i++){
             std::lock_guard<std::mutex> lock(mtx);
-            for(int j = 0; j < listaConectados.size(); j++){
-              if (PersonasEnviar[j].getNombre() == listaConectados.nombreCliente){
-                 send(listaConectados.socketCliente, msg.c_str(), msg.size(), 0);
+            for(std::size_t j = 0; j < listaConectados.size(); j++){
+              if (PersonasEnviar[i].getNombre() == listaConectados[j].nombreCliente){
+                 send(listaConectados[j].socketCliente, msg.c_str(), msg.size(), 0);
               }
             }
         }
     }
 }
 
- Cliente Servidor::devolverCliente(std::string nombre){
-    for(auto Cliente : listClientes){
-        if Cliente.getNombre() == nombre{
-            return Cliente
+ Cliente& Servidor::devolverCliente(std::string nombre){
+    for(const auto& Cliente : listClientes){
+        if (Cliente->getNombre() == nombre){
+            return *Cliente;
         }
     }
-    return nullptr
+    return nullptr;
  }
 
- Cuarto Servidor::devolverCuarto(std::string nombre){
-    for(auto Cuarto : listCuarto){
-        if Cuarto.getNombre() == nombre{
-            return Cuarto
+ Cuarto& Servidor::devolverCuarto(std::string nombre){
+    for(const auto& Cuarto : listCuartos){
+        if (Cuarto->getNombre() == nombre){
+            return *Cuarto;
         }
     }
-    return nullptr
+    return nullptr;
  }
 
 void Servidor::entradaUsuario(int socketCliente){
     json datos = recibo(socketCliente);
-
+    std::lock_guard<std::mutex> lock(mtx);
       if (datos["type"] == "IDENTIFY"){
           conectClienteSocket relacionClieSocket(datos["username"], socketCliente);
-          std::lock_guard<std::mutex> lock(mtx);
           listaConectados.push_back(relacionClieSocket);
 
       }else if(datos["type"] == "TEXT"){
         std::string json  = mandarMensaje(datos["text"], datos["username"]);
-        respuesta(datos["username"], json)
+        respuesta(datos["username"], json);
 
 
       }else if(datos["type"] == "STATUS"){
@@ -106,74 +133,71 @@ void Servidor::entradaUsuario(int socketCliente){
         respuesta(buscarNombre(socketCliente), json);  
 
       }else if(datos["type"] == "PUBLIC_TEXT"){
-         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente))
-         respuesta(listClientes, json) 
+         std::string json = mandarMensajePublico(datos["text"], buscarNombre(socketCliente));
+         respuesta(listClientes, json) ;
 
       }else if(datos["type"] == "NEW_ROOM"){
-        std::string json = :respuestaNuevoCuarto(datos["roomname"])
-         respuesta(buscarNombre(socketCliente), json) 
+        std::string json = respuestaNuevoCuarto(datos["roomname"]);
+         respuesta(buscarNombre(socketCliente), json);
           
       }else if(datos["type"] == "INVITE"){
-         std::vector<std::string> listaUsuarios = datos["usernames"]
-         std::string json = invitacion(datos["roomname"], listaUsuarios)
+         std::vector<std::string> listaUsuarios = datos["usernames"];
+         std::string json = invitacion(datos["roomname"], listaUsuarios);
          if(json["type"] == "Response"){
-            respuesta(buscarNombre(socketCliente), json)
+            respuesta(buscarNombre(socketCliente), json);
          }else{
-            respuesta(listClientes, json) 
-            
+            respuesta(listClientes, json);   
          }
          
-          
       }else if(datos["type"] == "JOIN_ROOM"){
-         std::string json = seUnioCuarto(devolverCliente((socketCliente)), datos["roomname"])
+         std::string json = seUnioCuarto(devolverCliente((socketCliente)), datos["roomname"]);
          std::isstringstream flujo(json); 
          std::string mensaje;
 
          while(std::getline(flujo, mensaje)){
             if(json["type"] == "RESPONSE"){
-              respuesta(buscarNombre(socketCliente), json) 
+              respuesta(buscarNombre(socketCliente), json);
             }else{
-              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json);
             }
          }
          
           
       }else if(datos["type"] == "ROOM_USERS"){
-        listaUsuariosCuarto( Cuarto sala, Cliente usuario)
-        std::string json = listaUsuariosCuarto(devolverCuarto(datos["roomname"]), devolverCliente((socketCliente)))
+        std::string json = listaUsuariosCuarto(devolverCuarto(datos["roomname"]), devolverCliente((socketCliente)));
          if(json["type"] == "RESPONSE"){
-              respuesta(buscarNombre(socketCliente), json) 
+              respuesta(buscarNombre(socketCliente), json);
             }else{
-              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json);
             }
           
       }else if(datos["type"] == "ROOM_TEXT"){
-         std::string json = mandarMensajeCuarto( datos["text"], datos["roomname"], devolverCliente((socketCliente)))
+         std::string json = mandarMensajeCuarto( datos["text"], datos["roomname"], devolverCliente((socketCliente)));
          if(json["type"] == "RESPONSE"){
-              respuesta(buscarNombre(socketCliente), json) 
+              respuesta(buscarNombre(socketCliente), json);
          }else{
-              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json);
          }
           
       }else if(datos["type"] == "LEAVE_ROOM"){
-         std::string json = abandonarCuarto(devolverCliente((socketCliente)), devolverCuarto(datos["roomname"]))
+         std::string json = abandonarCuarto(devolverCliente((socketCliente)), devolverCuarto(datos["roomname"]));
          if(json["type"] == "RESPONSE"){
-              respuesta(buscarNombre(socketCliente), json) 
+              respuesta(buscarNombre(socketCliente), json);
          }else{
-              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json)
+              respuesta(devolverCuarto(datos["roomname"]).getIntegrantes(),json);
          }
           
       }else if(datos["type"] == "DISCONNECT"){
-         std::string json = desconectado(devolverCliente(socketCliente))
-         respuesta(devolverCliente(socketCliente), json)
+         std::string json = desconectado(devolverCliente(socketCliente));
+         respuesta(devolverCliente(socketCliente), json);
           
       }else {
          std::string json = "{ \"type\": \"RESPONSE\",
                                 \"operation\": \"INVALID\",
-                                \"result\": \"INVALID\"  }\n"
-         respuesta(devolverCliente(socketCliente), json)
-         std::string json = desconectado(devolverCliente(socketCliente))
-         respuesta(devolverCliente(socketCliente), json)
+                                \"result\": \"INVALID\"  }\n";
+         respuesta(devolverCliente(socketCliente), json);
+         std::string json = desconectado(devolverCliente(socketCliente));
+         respuesta(devolverCliente(socketCliente), json);
       }
 
 }

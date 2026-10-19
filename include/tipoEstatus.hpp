@@ -4,7 +4,8 @@
 enum class tipoEstatus{
   ACTIVE,
   AWAY,
-  BUSY
+  BUSY,
+  INVALID
 
 };
 

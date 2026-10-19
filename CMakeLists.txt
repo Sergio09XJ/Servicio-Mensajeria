@@ -7,6 +7,8 @@ project(Servicio_Mensajeria
 
 find_package(Doxygen REQUIRED)
 find_package(GTest REQUIRED)
+find_package(nlohmann_json REQUIRED)
+
 include(GoogleTest)
 
 include_directories(include)
@@ -15,7 +17,6 @@ add_library(Servicio_Mensajeria
              ./src/Cliente.cpp
              ./src/Cuarto.cpp
              ./src/Servidor.cpp
-             ./src/tipoEstatus.cpp
            )
 
 target_include_directories(Servicio_Mensajeria PUBLIC include)
@@ -32,9 +33,9 @@ target_compile_options(Servicio_Mensajeria
 
 
 add_executable(ServicioMensajeriaTest
-              ./test/ClienteTest.cpp
-              ./test/ServidorTest.cpp
-              ./test/CuartoTest.cpp
+              ./tests/ClienteTest.cpp
+              ./tests/ServidorTest.cpp
+              ./tests/CuartoTest.cpp
               )
 
 
@@ -42,16 +43,21 @@ add_executable(ServicioMensajeriaApp
               ./src/main.cpp
              )
 
-
+target_link_libraries(Servicio_Mensajeria
+    PUBLIC nlohmann_json::nlohmann_json
+)
 
 target_link_libraries(ServicioMensajeriaTest
+    PRIVATE 
     Servicio_Mensajeria
     GTest::gtest
     GTest::gtest_main
+    
 )
 
 
 target_link_libraries(ServicioMensajeriaApp
+         PRIVATE 
          Servicio_Mensajeria
          )
 

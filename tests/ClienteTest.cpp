@@ -5,7 +5,7 @@
 #include "Cuarto.hpp"
 #include "Servidor.hpp"
 
-Servidor* servidorPruebaUnitaria = nullptr;
+Servidor* servidorPruebaUnitaria();
 
 
 // Caso Mensaje

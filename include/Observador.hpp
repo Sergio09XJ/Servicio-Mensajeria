@@ -15,7 +15,7 @@ class Observador{
      * @param Sin parametros. 
      * @return  
      */
-     virtual void actualizar() = 0; 
+     virtual void actualizar(int socketParam) = 0; 
      
      /**
      * @brief Destructor Observador; lo genera automaticamente. 

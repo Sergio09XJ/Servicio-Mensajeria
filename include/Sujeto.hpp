@@ -1,6 +1,10 @@
 #ifndef SUJETO_HPP
 #define SUJETO_HPP 
 
+#include<vector>
+#include<string>
+class Cliente; 
+
 /**
 * @class Clase interface para el sujeto.
          Quien manda actualizaciones a los observadores. 
