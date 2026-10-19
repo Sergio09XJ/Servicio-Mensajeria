@@ -94,24 +94,26 @@ void Servidor::respuesta(std::vector<Cliente> PersonasEnviar, std::string msg){
     }
 }
 
- Cliente& Servidor::devolverCliente(std::string nombre){
+
+Cliente* Servidor::devolverCliente(std::string nombre){
     for(const auto& Cliente : listClientes){
         if (Cliente->getNombre() == nombre){
-            return *Cliente;
+            return Cliente->getCliente();
         }
     }
     return nullptr;
- }
+}
 
- Cuarto& Servidor::devolverCuarto(std::string nombre){
+Cuarto* Servidor::devolverCuarto(std::string nombre){
     for(const auto& Cuarto : listCuartos){
         if (Cuarto->getNombre() == nombre){
-            return *Cuarto;
+            return Cuarto->getCuarto();
         }
     }
     return nullptr;
- }
+}
 
+/*
 void Servidor::entradaUsuario(int socketCliente){
     json datos = recibo(socketCliente);
     std::lock_guard<std::mutex> lock(mtx);
@@ -201,7 +203,7 @@ void Servidor::entradaUsuario(int socketCliente){
       }
 
 }
-
+*/
 
 // --------- Funciones Auxiliares ----------------------------------------------------------- 
 
@@ -211,6 +213,7 @@ std::string Servidor::buscarNombre(int socketParam){
             return listaConectados[i].nombreCliente;
         }
     }
+    return "No se encontro el nombre en base al socket";
 }
 
 
@@ -220,7 +223,9 @@ int Servidor::buscarSocket(std::string nombre){
             return listaConectados[i].socketCliente;
         }
     }
+    return 0;
 }
+
 
 bool Servidor::existeElUsuario(Cliente usuario){
     for (const auto& este : listClientes) {
@@ -257,14 +262,13 @@ std::string Servidor::nuevoStatus(std::string nombre,std::string estatus){
            "\"status\": \"" + estatus + "\" }\n";
 }
 
-
 std::string Servidor::usuariosList(){
 
     std::string usuariosJSON;
 
-    for (size_t i = 0; i < listUsuarios.size(); ++i){
-        usuariosJSON += "\"" + listUsuarios[i] + "\"";
-        if (i != listUsuarios.size() - 1){
+    for (size_t i = 0; i < listClientes.size(); i++){
+        usuariosJSON += "\"" + listClientes[i]->getNombre() + "\"";
+        if (i != listClientes.size() - 1){
             usuariosJSON += ", ";
         }
     }
@@ -272,6 +276,7 @@ std::string Servidor::usuariosList(){
     return "{ \"type\": \"USER_LIST\", "
              "\"users\": [" + usuariosJSON + "] }\n";
 }
+
 
 
 std::string Servidor::mandarMensaje(std::string msg, Cliente usuario){
@@ -343,7 +348,7 @@ std::string Servidor::respuestaNuevoCuarto(std::string cuartoNuevo){
            "\"extra\": \"" + cuartoNuevo + "\" }\n";
 }
 
-
+/*
 std::string Servidor::invitacion(Cuarto sala, std::vector<std::string> listaUsuarios){
 
     Cuarto* cuartoPtr = nullptr;
@@ -460,7 +465,6 @@ std::string Servidor::abandonarCuarto( Cliente usuario, Cuarto sala){
 
      if (existeElCuarto(sala)){
             cuartoPtr = sala;
-            break;
     }
 
     if (!cuartoPtr){
@@ -483,7 +487,7 @@ std::string Servidor::abandonarCuarto( Cliente usuario, Cuarto sala){
     }
 }
 
-
+*/
 void Servidor::eliminarCuarto(Cuarto sala){
 
     for (auto este = listCuartos.begin();   este != listCuartos.end();   ++este){

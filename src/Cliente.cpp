@@ -38,6 +38,10 @@ bool Cliente::operator==(const Cliente& otro) const{
     return this->nombre == otro.nombre;
 }
 
+Cliente* Cliente::getCliente(){
+    return this; 
+}
+
 std::string Cliente::getNombre(){
     return this->nombre;
 }

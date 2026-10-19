@@ -89,14 +89,14 @@ class Servidor : public Sujeto{
      * @param El nombre del cliente
      * @return El cliente 
      */
-     Cliente& devolverCliente(std::string nombre);
+     Cliente* devolverCliente(std::string nombre);
 
     /**
      * @brief devolverCuarto; busca un cuarto y lo devuelve en base a su nombre
      * @param El nombre del cuarto
      * @return El cuarto 
      */
-     Cliente& devolverCuarto(std::string nombre);
+     Cuarto* devolverCuarto(std::string nombre);
 
      /**
      * @brief entradaUsuario; se encarga de mandar a llamar a recibo pero desde un thread  
@@ -203,7 +203,7 @@ class Servidor : public Sujeto{
      * @param El mensaje
      * @return string de tipo json 
      */
-     std::string invitacion(Cuarto sala, std::vector<Cliente> listaUsuarios);
+     std::string invitacion(Cuarto sala, std::vector<std::string> listaUsuarios);
      
 
      /**

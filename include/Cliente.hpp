@@ -53,6 +53,13 @@ class Cliente : public Observador{
      bool operator==(const Cliente& otro) const;
 
      /**
+     * @brief get() permite devolver un puntero de la instancia
+     * @param Nada
+     * @return un puntero a Cliente.  
+     */
+     Cliente* getCliente();
+
+     /**
      * @brief getNombre; para obtener el nombre de la instancía 
      * @param Sin parametros
      * @return el nombre, string

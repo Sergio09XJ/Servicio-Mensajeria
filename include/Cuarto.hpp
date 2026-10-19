@@ -43,6 +43,13 @@ class Cuarto{
      bool operator==(const Cuarto& otro) const;
 
      /**
+     * @brief get() permite devolver un puntero de la instancia
+     * @param Nada
+     * @return un puntero a Cuarto.  
+     */
+     Cuarto* getCuarto();
+
+     /**
      * @brief getIntegrantes; retorna el nombre 
      * @param No tiene
      * @return El string del nombre  

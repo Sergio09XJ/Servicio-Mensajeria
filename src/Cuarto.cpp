@@ -5,6 +5,9 @@ bool Cuarto::operator==(const Cuarto& otro) const{
     return this->nombre == otro.nombre;
 }
 
+Cuarto* Cuarto::getCuarto(){
+    return this; 
+}
 
 std::vector<Cliente> Cuarto::getIntegrantes(){
     return this->integrantes;
