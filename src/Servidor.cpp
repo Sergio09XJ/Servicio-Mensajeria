@@ -113,7 +113,7 @@ Cuarto* Servidor::devolverCuarto(std::string nombre){
     return nullptr;
 }
 
-/*
+
 void Servidor::entradaUsuario(int socketCliente){
     json datos = recibo(socketCliente);
     std::lock_guard<std::mutex> lock(mtx);
@@ -122,11 +122,11 @@ void Servidor::entradaUsuario(int socketCliente){
           listaConectados.push_back(relacionClieSocket);
 
       }else if(datos["type"] == "TEXT"){
-        std::string json  = mandarMensaje(datos["text"], datos["username"]);
+        std::string json  = mandarMensaje(datos["text"], *devolverCliente(datos["username"]));
         respuesta(datos["username"], json);
 
 
-      }else if(datos["type"] == "STATUS"){
+      }/*else if(datos["type"] == "STATUS"){
         std::string json = nuevoEstatus(buscarNombre(socketCliente) , datos["status"]);
         respuesta(listClientes, json);
           
@@ -200,10 +200,10 @@ void Servidor::entradaUsuario(int socketCliente){
          respuesta(devolverCliente(socketCliente), json);
          std::string json = desconectado(devolverCliente(socketCliente));
          respuesta(devolverCliente(socketCliente), json);
-      }
+      }*/
 
 }
-*/
+
 
 // --------- Funciones Auxiliares ----------------------------------------------------------- 
 
@@ -279,7 +279,7 @@ std::string Servidor::usuariosList(){
 
 
 
-std::string Servidor::mandarMensaje(std::string msg, Cliente usuario){
+std::string Servidor::mandarMensaje(std::string msg, const Cliente& usuario){
 
     if (existeElUsuario(usuario)){
 
@@ -348,13 +348,12 @@ std::string Servidor::respuestaNuevoCuarto(std::string cuartoNuevo){
            "\"extra\": \"" + cuartoNuevo + "\" }\n";
 }
 
-/*
+// ---------------
 std::string Servidor::invitacion(Cuarto sala, std::vector<std::string> listaUsuarios){
 
     Cuarto* cuartoPtr = nullptr;
     if (existeElCuarto(sala)){
-        cuartoPtr = sala;
-        break;
+        cuartoPtr = &sala;
     }
 
     if (!cuartoPtr){
@@ -364,27 +363,29 @@ std::string Servidor::invitacion(Cuarto sala, std::vector<std::string> listaUsua
                "\"extra\": \"" + sala.getNombre() + "\" }\n";
     }
 
-    for (const std::string usuario : listaUsuarios){
+    for (const std::string& usuario : listaUsuarios){
         bool encontrado = false;
-        if (listClientes.saberPersonaEsta(usuario)){
+        for(std::size_t i = 0; i < listClientes.size(); i++){
+              if (listClientes[i]->getNombre() == usuario){
                 encontrado = true;
                 break;
             }
-    
-
+        }
+        
         if (!encontrado){
             return "{ \"type\": \"RESPONSE\", "
                    "\"operation\": \"INVITE\", "
                    "\"result\": \"NO_SUCH_USER\", "
-                   "\"extra\": \"" + usuario.getNombre() + "\" }\n";
+                   "\"extra\": \"" + usuario + "\" }\n";
         }
     }
     
     std::string retorno;
+
     for (const auto& usuario : listaUsuarios){
-        if (!cuartoPtr->saberPersonaEsta(usuario.getNombre())){
+             if (!cuartoPtr->saberPersonaEsta(usuario)){
             retorno += "{ \"type\": \"INVITATION\", "
-                        "\"username\": \"" + usuario.getNombre() + "\", "
+                        "\"username\": \"" + usuario + "\", "
                         "\"roomname\": \"" + sala.getNombre() + "\" }\n";
         }
     }
@@ -397,7 +398,7 @@ std::string Servidor::seUnioCuarto(Cliente usuario, Cuarto sala){
 
     Cuarto* cuartoPtr = nullptr;
         if (existeElCuarto(sala)){
-            cuartoPtr = sala;
+            cuartoPtr = &sala;
         }
     
 
@@ -437,9 +438,9 @@ std::string Servidor::listaUsuariosCuarto( Cuarto sala, Cliente usuario){
 
     Cuarto* cuartoPtr = nullptr;
     if (existeElCuarto(sala)){
-            cuartoPtr = sala;
-        }
+            cuartoPtr = &sala;
     }
+
 
     if (!cuartoPtr){
         return "{ \"type\": \"RESPONSE\", "
@@ -464,7 +465,7 @@ std::string Servidor::abandonarCuarto( Cliente usuario, Cuarto sala){
     Cuarto* cuartoPtr = nullptr;
 
      if (existeElCuarto(sala)){
-            cuartoPtr = sala;
+            cuartoPtr = &sala;
     }
 
     if (!cuartoPtr){
@@ -487,7 +488,7 @@ std::string Servidor::abandonarCuarto( Cliente usuario, Cuarto sala){
     }
 }
 
-*/
+
 void Servidor::eliminarCuarto(Cuarto sala){
 
     for (auto este = listCuartos.begin();   este != listCuartos.end();   ++este){

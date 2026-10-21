@@ -42,7 +42,7 @@ Cliente* Cliente::getCliente(){
     return this; 
 }
 
-std::string Cliente::getNombre(){
+std::string Cliente::getNombre() const{
     return this->nombre;
 }
 

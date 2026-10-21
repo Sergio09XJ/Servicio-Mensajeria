@@ -64,7 +64,7 @@ class Cliente : public Observador{
      * @param Sin parametros
      * @return el nombre, string
      */
-     std::string getNombre();
+     std::string getNombre() const;
 
      /**
      * @brief getInstanciaNombre; para obtener la instancia a partir del nombre. 

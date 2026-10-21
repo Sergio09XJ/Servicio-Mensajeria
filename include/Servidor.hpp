@@ -182,7 +182,7 @@ class Servidor : public Sujeto{
      * @param El cliente a mandar mensaje y para quien es el mensaje
      * @return string de tipo json 
      */
-     std::string mandarMensaje(std::string msg, Cliente usuario);
+     std::string mandarMensaje(std::string msg, const Cliente& usuario);
 
      /**
      * @brief mandarMensajePublico; manda un mensaje a todos los usuarios conectados 
